@@ -53,3 +53,80 @@ var renderAllImages = function () {
 };
 
 renderAllImages();
+
+
+var bodyBizarre = document.querySelector('body');
+var uploadInput = document.querySelector('.img-upload__input');
+var imgEditing = document.querySelector('.img-upload__overlay');
+var imgEditingCancel = imgEditing.querySelector('.img-upload__cancel');
+
+var onImgEditingEscPress = function (evt) {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    closeImgEditing();
+  }
+};
+
+// нормально ли указывать input, хотя кликаем мы по label?
+uploadInput.addEventListener('click', function (evt) {
+  evt.preventDefault();
+  imgEditing.classList.remove('hidden');
+  bodyBizarre.classList.add('modal-open');
+  document.addEventListener('keydown', onImgEditingEscPress);
+});
+
+var closeImgEditing = function () {
+  imgEditing.classList.add('hidden');
+  bodyBizarre.classList.remove('modal-open');
+  document.removeEventListener('keydown', onImgEditingEscPress);
+  // не работает:
+  // filterList.removeEventListener('change', applyFilter);
+  // а хотелось бы сбрасывать все фильтры после закрытия модального окна
+};
+
+imgEditingCancel.addEventListener('click', function () {
+  closeImgEditing();
+});
+
+// eslint-disable-next-line no-unused-vars
+var effectLevelPin = document.querySelector('.effect-level__pin');
+var effectLevelSlider = document.querySelector('.img-upload__effect-level');
+var previewOriginal = document.querySelector('#effect-none');
+var uploadedImage = document.querySelector('.img-upload__preview img');
+var filterList = document.querySelector('.effects__list');
+
+if (previewOriginal.checked) {
+  effectLevelSlider.classList.add('hidden');
+}
+
+var applyFilter = function (evt) {
+  if (evt.target.value === 'none') {
+    uploadedImage.setAttribute('class', '');
+    effectLevelSlider.classList.add('hidden');
+  } else {
+    uploadedImage.setAttribute('class', 'effects__preview--' + evt.target.value);
+    effectLevelSlider.classList.remove('hidden');
+  }
+};
+
+filterList.addEventListener('change', applyFilter);
+
+
+var hashtagInput = document.querySelector('.text-hashtags');
+var hashtagRegex = /^#[A-Za-zА-Яа-я0-9]{2,20}$/i;
+var hashtags = hashtagInput.split(' ');
+
+// ниже - неудачная попытка валидировать хештеги.
+// validity - это свойство всего инпута, мы не можем применить его к отдельным хэштегам?
+// а значит - можем только указать пользователю, что где-то он ошибся, но не можем указать, в чем состоит ошибка?
+
+hashtagInput.addEventListener('invalid', function () {
+  for (var i = 0; i < hashtags.length; i++) {
+    if (hashtagRegex.test(hashtags[i]) === false) {
+      hashtagInput.setCustomValidity('В хэштеге допущена ошибка');
+    } else {
+      hashtagInput.setCustomValidity('');
+    }
+  }
+});
+
