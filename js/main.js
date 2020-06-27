@@ -112,12 +112,13 @@ filterList.addEventListener('change', applyFilter);
 
 
 var hashtagInput = document.querySelector('.text-hashtags');
-var hashtags = hashtagInput.split(' ');
 
-hashtagInput.addEventListener('input', function () {
-  var hashtagRegex = /^#[A-Za-zА-Яа-я0-9]{2,20}$/i;
-  for (var i = 0; i < hashtags.length; i++) {
-    if (hashtags !== '') {
+// последний вариант, по результатам переписки - увы, снова ошибка: Cannot read property 'addEventListener' of null:
+hashtagInput.addEventListener('change', function () {
+  if (hashtagInput.value !== '') {
+    var hashtags = hashtagInput.value.split(' ');
+    var hashtagRegex = /^#[A-Za-zА-Яа-я0-9]{2,20}$/i;
+    for (var i = 0; i < hashtags.length; i++) {
       if (hashtagRegex.test(hashtags[i]) === false) {
         hashtagInput.setCustomValidity('В хэштеге допущена ошибка');
       } else {
@@ -126,5 +127,3 @@ hashtagInput.addEventListener('input', function () {
     }
   }
 });
-
-
