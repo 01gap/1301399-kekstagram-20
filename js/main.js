@@ -20,7 +20,7 @@ var createImgComment = function () {
     comments[j] = {
       avatar: 'img/avatar-' + Math.floor(Math.random() * 6 + 1) + '.svg',
       name: NAMES[Math.floor(Math.random() * NAMES.length)],
-      message: createImgMessage(), // MESSAGES[Math.floor(Math.random() * MESSAGES.length)],
+      message: createImgMessage(),
     };
   }
   return comments;
@@ -56,9 +56,11 @@ renderAllImages();
 
 
 var bodyBizarre = document.querySelector('body');
-var uploadInput = document.querySelector('.img-upload__input');
 var imgEditing = document.querySelector('.img-upload__overlay');
+// var uploadLabel = document.querySelector('.img-upload__label');
 var imgEditingCancel = imgEditing.querySelector('.img-upload__cancel');
+var imgUploadInput = document.querySelector('.img-upload__input');
+var uploadedImage = document.querySelector('.img-upload__preview img');
 
 var onImgEditingEscPress = function (evt) {
   if (evt.key === 'Escape') {
@@ -67,21 +69,22 @@ var onImgEditingEscPress = function (evt) {
   }
 };
 
-// нормально ли указывать input, хотя кликаем мы по label?
-uploadInput.addEventListener('click', function (evt) {
-  evt.preventDefault();
+
+imgUploadInput.addEventListener('change', function () {
+  // так я пыталась добавить загрузку стороннего изображения. Адрес изображения в DOM появляется, но консоль выдает ошибку: net::ERR_FILE_NOT_FOUND
+  // uploadedImage.src = imgUploadInput.value;
   imgEditing.classList.remove('hidden');
   bodyBizarre.classList.add('modal-open');
   document.addEventListener('keydown', onImgEditingEscPress);
+  if (previewOriginal.checked) {
+    effectLevelSlider.classList.add('hidden');
+  }
 });
 
 var closeImgEditing = function () {
   imgEditing.classList.add('hidden');
   bodyBizarre.classList.remove('modal-open');
   document.removeEventListener('keydown', onImgEditingEscPress);
-  // не работает:
-  // filterList.removeEventListener('change', applyFilter);
-  // а хотелось бы сбрасывать все фильтры после закрытия модального окна
 };
 
 imgEditingCancel.addEventListener('click', function () {
@@ -92,12 +95,8 @@ imgEditingCancel.addEventListener('click', function () {
 var effectLevelPin = document.querySelector('.effect-level__pin');
 var effectLevelSlider = document.querySelector('.img-upload__effect-level');
 var previewOriginal = document.querySelector('#effect-none');
-var uploadedImage = document.querySelector('.img-upload__preview img');
 var filterList = document.querySelector('.effects__list');
 
-if (previewOriginal.checked) {
-  effectLevelSlider.classList.add('hidden');
-}
 
 var applyFilter = function (evt) {
   if (evt.target.value === 'none') {
@@ -113,20 +112,19 @@ filterList.addEventListener('change', applyFilter);
 
 
 var hashtagInput = document.querySelector('.text-hashtags');
-var hashtagRegex = /^#[A-Za-zА-Яа-я0-9]{2,20}$/i;
 var hashtags = hashtagInput.split(' ');
 
-// ниже - неудачная попытка валидировать хештеги.
-// validity - это свойство всего инпута, мы не можем применить его к отдельным хэштегам?
-// а значит - можем только указать пользователю, что где-то он ошибся, но не можем указать, в чем состоит ошибка?
-
-hashtagInput.addEventListener('invalid', function () {
+hashtagInput.addEventListener('input', function () {
+  var hashtagRegex = /^#[A-Za-zА-Яа-я0-9]{2,20}$/i;
   for (var i = 0; i < hashtags.length; i++) {
-    if (hashtagRegex.test(hashtags[i]) === false) {
-      hashtagInput.setCustomValidity('В хэштеге допущена ошибка');
-    } else {
-      hashtagInput.setCustomValidity('');
+    if (hashtags !== '') {
+      if (hashtagRegex.test(hashtags[i]) === false) {
+        hashtagInput.setCustomValidity('В хэштеге допущена ошибка');
+      } else {
+        hashtagInput.setCustomValidity('');
+      }
     }
   }
 });
+
 
