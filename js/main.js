@@ -111,19 +111,22 @@ var applyFilter = function (evt) {
 filterList.addEventListener('change', applyFilter);
 
 
-var hashtagInput = document.querySelector('.text-hashtags');
+var hashtagInput = document.querySelector('.text__hashtags');
 
-// последний вариант, по результатам переписки - увы, снова ошибка: Cannot read property 'addEventListener' of null:
-hashtagInput.addEventListener('change', function () {
+hashtagInput.addEventListener('input', function () {
+  var isValid = true;
   if (hashtagInput.value !== '') {
-    var hashtags = hashtagInput.value.split(' ');
-    var hashtagRegex = /^#[A-Za-zА-Яа-я0-9]{2,20}$/i;
+    var hashtags = hashtagInput.value.trim().split(' ');
+    var hashtagRegex = /^#[A-ZА-Я0-9ё]{2,20}$/i;
     for (var i = 0; i < hashtags.length; i++) {
       if (hashtagRegex.test(hashtags[i]) === false) {
-        hashtagInput.setCustomValidity('В хэштеге допущена ошибка');
-      } else {
-        hashtagInput.setCustomValidity('');
+        isValid = false;
       }
     }
+  }
+  if (isValid) {
+    hashtagInput.setCustomValidity('');
+  } else {
+    hashtagInput.setCustomValidity('В хэштеге допущена ошибка');
   }
 });
