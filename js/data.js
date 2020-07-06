@@ -22,7 +22,7 @@
     var comments = [];
     for (var i = 0; i < createRandom(0, 9); i++) {
       comments[i] = {
-        avatar: 'img/avatar-' + Math.floor(Math.random() * 6 + 1) + '.svg',
+        avatar: 'img/avatar-' + createRandom(1, 6) + '.svg',
         name: NAMES[Math.floor(Math.random() * NAMES.length)],
         message: createImgMessage(),
       };
