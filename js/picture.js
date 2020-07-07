@@ -20,6 +20,7 @@
   };
 
   window.picture = {
-    renderAllImages: renderAllImages
+    renderAllImages: renderAllImages,
+    pictures: pictures
   };
 })();

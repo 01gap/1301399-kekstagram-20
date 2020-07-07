@@ -12,7 +12,7 @@
 
   var createImgMessage = function () {
     var msg = '';
-    for (var i = 0; i < createRandom(0, 1); i++) {
+    for (var i = 0; i < createRandom(1, 2); i++) {
       msg += MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
     }
     return msg;
@@ -20,7 +20,7 @@
 
   var createImgComment = function () {
     var comments = [];
-    for (var i = 0; i < createRandom(0, 9); i++) {
+    for (var i = 0; i < createRandom(1, 9); i++) {
       comments[i] = {
         avatar: 'img/avatar-' + createRandom(1, 6) + '.svg',
         name: NAMES[Math.floor(Math.random() * NAMES.length)],
