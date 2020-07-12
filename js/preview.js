@@ -3,8 +3,7 @@
   var popup = document.querySelector('.big-picture');
   var previewBtnClose = popup.querySelector('.big-picture__cancel');
 
-  var openPopup = function (evt) {
-    evt.preventDefault();
+  var openPopup = function () {
     popup.classList.remove('hidden');
     document.querySelector('body').classList.add('modal-open');
     document.addEventListener('keydown', onPopupEscPress);
@@ -12,7 +11,7 @@
 
   var closePopup = function () {
     popup.classList.add('hidden');
-    document.querySelector('body').classList.remove('modal-open');
+    document.body.classList.remove('modal-open');
     document.removeEventListener('keydown', onPopupEscPress);
   };
 
@@ -62,26 +61,15 @@
     commentsList.appendChild(fragmentComment);
   };
 
-  var onClickShowPreview = function (evt, manyPicsData) {
-    if (evt.target.dataset.idnumber >= 0) {
-      var number = evt.target.dataset.idnumber;
-      evt.preventDefault();
-      insertPictureInfo(manyPicsData[number]);
-      insertComments(manyPicsData[number]);
-      openPopup(evt);
-      document.querySelector('.social__comment-count').classList.add('hidden');
-      document.querySelector('.comments-loader').classList.add('hidden');
-    }
-  };
-
-  var onEnterShowPreview = function (evt, manyPicsData) {
-    if (evt.key === 'Enter') {
-      onClickShowPreview(evt, manyPicsData);
-    }
+  var showPopup = function (picture) {
+    insertPictureInfo(picture);
+    insertComments(picture);
+    openPopup();
+    document.querySelector('.social__comment-count').classList.add('hidden');
+    document.querySelector('.comments-loader').classList.add('hidden');
   };
 
   window.preview = {
-    onClickShowPreview: onClickShowPreview,
-    onEnterShowPreview: onEnterShowPreview
+    showPopup: showPopup
   };
 })();

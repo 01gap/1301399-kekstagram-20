@@ -69,25 +69,21 @@
   };
 
 
-  buttonSubmit.addEventListener('click', function (evt) {
+  buttonSubmit.addEventListener('click', function () {
     hashtagInput.setCustomValidity('');
     if (hashtagInput.value !== '') {
-      var isValid = true;
       var hashtags = hashtagInput.value.trim().split(' ');
       var hashtagRegex = /^#[A-ZА-Я0-9ё]{1,19}$/i;
-      for (var i = 0; i < hashtags.length && isValid; i++) {
+      for (var i = 0; i < hashtags.length; i++) {
         if (!hashtagRegex.test(hashtags[i])) {
           hashtagInput.setCustomValidity('Хэштег должен начинаться с "#" и содержать от 1 до 19 букв и/или цифр (знаки пунктуации, пробелы и спецсимволы не допускаются)');
-          evt.preventDefault();
-          isValid = false;
+          break;
         } else if (!isUniqueArr(hashtags)) {
           hashtagInput.setCustomValidity('Хэштеги не должны повторяться');
-          evt.preventDefault();
-          isValid = false;
+          break;
         } else if (hashtags.length >= 5) {
           hashtagInput.setCustomValidity('Нужно не более пяти хэштегов');
-          evt.preventDefault();
-          isValid = false;
+          break;
         }
       }
     }
