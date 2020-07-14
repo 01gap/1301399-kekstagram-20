@@ -3,7 +3,6 @@
 // form.js модуль работы с формой
 
 (function () {
-  var bodyBizarre = document.querySelector('body');
   var imgEditing = document.querySelector('.img-upload__overlay');
   var imgEditingCancel = imgEditing.querySelector('.img-upload__cancel');
   var imgUploadInput = document.querySelector('.img-upload__input');
@@ -11,14 +10,13 @@
   var uploadComment = document.querySelector('.text__description');
   var buttonSubmit = document.querySelector('.img-upload__submit');
   var hashtagInput = document.querySelector('.text__hashtags');
-  // var effectLevelPin = document.querySelector('.effect-level__pin');
   var effectLevelSlider = document.querySelector('.img-upload__effect-level');
   var previewOriginal = document.querySelector('#effect-none');
   var filterList = document.querySelector('.effects__list');
 
   var closeImgEditing = function () {
     imgEditing.classList.add('hidden');
-    bodyBizarre.classList.remove('modal-open');
+    document.body.classList.remove('modal-open');
     document.removeEventListener('keydown', onImgEditingEscPress);
   };
 
@@ -31,7 +29,7 @@
 
   imgUploadInput.addEventListener('change', function () {
     imgEditing.classList.remove('hidden');
-    bodyBizarre.classList.add('modal-open');
+    document.body.classList.add('modal-open');
     document.addEventListener('keydown', onImgEditingEscPress);
     if (previewOriginal.checked) {
       effectLevelSlider.classList.add('hidden');
@@ -42,13 +40,14 @@
     closeImgEditing();
   });
 
-
+  var appliedFilter;
   var onChangeApplyFilter = function (evt) {
-    if (evt.target.value === 'none') {
+    appliedFilter = evt.target.value;
+    if (appliedFilter === 'none') {
       uploadedImage.setAttribute('class', '');
       effectLevelSlider.classList.add('hidden');
     } else {
-      uploadedImage.setAttribute('class', 'effects__preview--' + evt.target.value);
+      uploadedImage.setAttribute('class', 'effects__preview--' + appliedFilter);
       effectLevelSlider.classList.remove('hidden');
     }
   };
@@ -88,4 +87,80 @@
       }
     }
   });
+
+  var effectLine = document.querySelector('.effect-level__line');
+  var effectPin = effectLine.querySelector('.effect-level__pin');
+  var effectDepth = effectLine.querySelector('.effect-level__depth');
+  var effectValue = document.querySelector('.effect-level__value');
+  var GRAYSCALE = {
+    min: 0,
+    max: 1,
+    unit: ''
+  };
+  var SEPIA = {
+    min: 0,
+    max: 1,
+    unit: ''
+  };
+
+  var INVERT = {
+    min: 0,
+    max: 100,
+    unit: '%'
+  };
+
+  var BLUR = {
+    min: 0,
+    max: 3,
+    unit: 'px'
+  };
+
+  var BRIGHTNESS = {
+    min: 1,
+    max: 2,
+    unit: ''
+  };
+
+  var FILTERS = {
+    chrome: GRAYSCALE,
+    sepia: SEPIA,
+    marvin: INVERT,
+    phobos: BLUR,
+    heat: BRIGHTNESS
+  };
+
+  var addFilterValue = function (effect, ratio) {
+    uploadedImage.style.filter = effect + '(' + FILTERS.effect.min + ratio * (FILTERS.effect.max - FILTERS.effect.min) + FILTERS.effect.unit + ')';
+  };
+
+
+  effectPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var pinStart = effectPin.getBoundingClientRect();
+    var line = effectLine.getBoundingClientRect();
+    var pinStartRelX = pinStart.x - line.x;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      var shiftX = moveEvt.clientX - pinStart.x;
+      var relCoordX = pinStartRelX + shiftX;
+      var restrictedCoordX = Math.max(0, Math.min(line.width, relCoordX));
+      effectPin.style.left = restrictedCoordX + 'px';
+      effectDepth.style.width = restrictedCoordX + 'px';
+      var depthPercentage = Math.round(restrictedCoordX * 100 / line.width);
+      var depthRatio = depthPercentage / 100;
+      effectValue.value = depthPercentage;
+      // главный вопрос: как получить (куда сохранить) имя примененного
+      // эффекта из onChangeApplyFilter, чтобы использовать его здесь ?
+      // addFilterValue(appliedFilter, depthRatio);
+    };
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
 })();
