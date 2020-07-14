@@ -5,21 +5,28 @@
 (function () {
   var usersImagesContainer = document.querySelector('.pictures');
   var usersImageTemplate = document.querySelector('#picture').content.querySelector('.picture');
-  var pictures = window.data.generateData();
 
-  var renderAllImages = function () {
+  var renderImage = function (picture) {
+    var oneImage = usersImageTemplate.cloneNode(true);
+    oneImage.querySelector('.picture__img').setAttribute('src', picture.url);
+    oneImage.querySelector('.picture__comments').textContent = picture.comments.length;
+    oneImage.querySelector('.picture__likes').textContent = picture.likes;
+    oneImage.addEventListener('click', function (evt) {
+      evt.preventDefault();
+      window.preview.showPopup(picture);
+    });
+    return oneImage;
+  };
+
+  var renderAllImages = function (pictures) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < pictures.length; i++) {
-      var oneImage = usersImageTemplate.cloneNode(true);
-      oneImage.querySelector('.picture__img').setAttribute('src', pictures[i].url);
-      oneImage.querySelector('.picture__comments').textContent = pictures[i].comments.length;
-      oneImage.querySelector('.picture__likes').textContent = pictures[i].likes;
-      fragment.appendChild(oneImage);
+      fragment.appendChild(renderImage(pictures[i]));
     }
     usersImagesContainer.appendChild(fragment);
   };
 
   window.picture = {
-    renderAllImages: renderAllImages
+    renderAllImages: renderAllImages,
   };
 })();
