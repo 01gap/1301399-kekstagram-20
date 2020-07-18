@@ -2,9 +2,16 @@
 
 // main.js
 (function () {
-  var pictures = window.data.generateData();
+  // var onGetDataError = function (message) {
+  // // console.error(message);
+  // };
+  var onGetDataSuccess = function (data) {
+  // console.log(data);
+    window.picture.renderAllImages(data);
+  };
 
   window.addEventListener('load', function () {
-    window.picture.renderAllImages(pictures);
+    window.data.getData('https://javascript.pages.academy/kekstagram/data', onGetDataSuccess, function () {});
   });
+
 })();
