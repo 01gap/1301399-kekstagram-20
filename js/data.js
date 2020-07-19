@@ -1,53 +1,30 @@
 'use strict';
 // data.js модуль данных
 (function () {
-  var MESSAGES = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
-  var NAMES = ['Dub Dubom', 'Василий Петрович', 'Генрих IV', 'Анюта', 'Анонимус', 'Финдус'];
-  var PIC_COUNT = 25;
+  var getData = function (url, onSucces, onError) {
+    var xhr = new XMLHttpRequest();
 
-  var createRandom = function (min, max) {
-    var randomNumber = Math.floor(Math.random() * (max - min + 1) + min);
-    return randomNumber;
-  };
+    xhr.responseType = 'json';
+    xhr.addEventListener('load', function () {
+      if (xhr.status === 200) {
+        onSucces(xhr.response);
+      } else {
+        onError('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);
+      }
+    });
+    xhr.addEventListener('error', function () {
+      onError('Произошла ошибка соединения');
+    });
 
-  var createImgMessage = function () {
-    var msg = '';
-    for (var i = 0; i < createRandom(1, 2); i++) {
-      msg += MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
-    }
-    return msg;
-  };
+    xhr.addEventListener('timeout', function () {
+      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+    });
+    xhr.timeout = 10000; // 10s
 
-  var createImgComment = function () {
-    var comments = [];
-    for (var i = 0; i < createRandom(1, 9); i++) {
-      comments[i] = {
-        avatar: 'img/avatar-' + createRandom(1, 6) + '.svg',
-        name: NAMES[Math.floor(Math.random() * NAMES.length)],
-        message: createImgMessage(),
-      };
-    }
-    return comments;
+    xhr.open('GET', url);
+    xhr.send();
   };
-  var createImageUnit = function (imgIndex) {
-    var imageUnit = {
-      url: 'photos/' + imgIndex + '.jpg',
-      description: '',
-      likes: createRandom(15, 200),
-      comments: createImgComment(),
-    };
-    return imageUnit;
-  };
-
-  var generateData = function () {
-    var pictures = [];
-    for (var i = 0; i < PIC_COUNT; i++) {
-      pictures.push(createImageUnit(i + 1));
-    }
-    return pictures;
-  };
-
   window.data = {
-    generateData: generateData
+    getData: getData
   };
 })();
