@@ -21,6 +21,15 @@
   var effectValue = document.querySelector('.effect-level__value');
   var currentEffect;
 
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
+  var successMessage = successTemplate.cloneNode(true);
+  var successBtn = successMessage.querySelector('.success__button');
+
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var errorMessage = errorTemplate.cloneNode(true);
+  var errorBtn = successMessage.querySelector('.error__button');
+
+
   var GRAYSCALE = {
     name: 'grayscale',
     min: 0,
@@ -173,5 +182,67 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   };
+  var main = document.querySelector('main');
 
+  var onPostDataError = function (message) {
+    console.log(message);
+    imgEditing.classList.add('hidden');
+    main.appendChild(errorMessage);
+    errorMessage.addEventListener('keydown', onErrorMessageEscPress);
+  };
+
+  var onErrorMessageEscPress = function (evt) {
+    if (evt.key === 'Esc') {
+      evt.preventDefault();
+      closeErrorMessage();
+    }
+  };
+
+  var closeErrorMessage = function () {
+    errorMessage.classList.add('hidden');
+    errorMessage.removeEventListener('keydown', onErrorMessageEscPress);
+  };
+
+  errorBtn.addEventListener('click', function () {
+    closeErrorMessage();
+  });
+
+  var onPostDataSuccess = function (data) {
+    console.log(data);
+    imgEditing.classList.add('hidden');
+    main.appendChild(successMessage);
+    successMessage.addEventListener('keydown', onSuccessMessageEscPress);
+    document.addEventListener('mouseup', onClickOutsideCloseSuccessMessage);
+  };
+
+  var onSuccessMessageEscPress = function (evt) {
+    if (evt.key === 'Esc') {
+      evt.preventDefault();
+      closeSuccessMessage();
+    }
+  };
+
+  var closeSuccessMessage = function () {
+    successMessage.classList.add('hidden');
+    successMessage.removeEventListener('keydown', onSuccessMessageEscPress);
+    document.removeEventListener('mouseup', onClickOutsideCloseSuccessMessage);
+  };
+
+  successBtn.addEventListener('click', function () {
+    closeSuccessMessage();
+  });
+
+
+  var onClickOutsideCloseSuccessMessage = function (evt) {
+    if (evt.target !== successMessage) {
+      closeSuccessMessage();
+    }
+  };
+
+  var form = document.querySelector('.img-upload__form');
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    var formData = new FormData(form);
+    window.data.postData(formData, onPostDataSuccess, onPostDataError);
+  });
 })();
