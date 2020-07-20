@@ -12,7 +12,6 @@
   var buttonSubmit = document.querySelector('.img-upload__submit');
   var hashtagInput = document.querySelector('.text__hashtags');
   var effectLevelSlider = document.querySelector('.img-upload__effect-level');
-  var previewOriginal = document.querySelector('#effect-none');
   var filterList = document.querySelector('.effects__list');
 
   var effectLine = document.querySelector('.effect-level__line');
@@ -20,56 +19,56 @@
   var effectDepth = effectLine.querySelector('.effect-level__depth');
   var effectValue = document.querySelector('.effect-level__value');
   var currentEffect;
+  var message;
 
-  var successTemplate = document.querySelector('#success').content.querySelector('.success');
-  var successMessage = successTemplate.cloneNode(true);
-  var successBtn = successMessage.querySelector('.success__button');
+  var main = document.querySelector('main');
+  var form = document.querySelector('.img-upload__form');
 
-  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-  var errorMessage = errorTemplate.cloneNode(true);
-  var errorBtn = successMessage.querySelector('.error__button');
+  var MessageType = {
+    success: 'success',
+    error: 'error'
+  };
 
-
-  var GRAYSCALE = {
+  var grayscale = {
     name: 'grayscale',
     min: 0,
     max: 1,
     unit: ''
   };
-  var SEPIA = {
+  var sepia = {
     name: 'sepia',
     min: 0,
     max: 1,
     unit: ''
   };
 
-  var INVERT = {
+  var invert = {
     name: 'invert',
     min: 0,
     max: 100,
     unit: '%'
   };
 
-  var BLUR = {
+  var blur = {
     name: 'blur',
     min: 0,
     max: 3,
     unit: 'px'
   };
 
-  var BRIGHTNESS = {
-    name: 'brightness',
+  var brightness = {
+    name: 'blur',
     min: 1,
     max: 2,
     unit: ''
   };
 
-  var FILTERS = {
-    chrome: GRAYSCALE,
-    sepia: SEPIA,
-    marvin: INVERT,
-    phobos: BLUR,
-    heat: BRIGHTNESS
+  var Filters = {
+    chrome: grayscale,
+    sepia: sepia,
+    marvin: invert,
+    phobos: blur,
+    heat: brightness
   };
 
   var closeImgEditing = function () {
@@ -85,25 +84,37 @@
     }
   };
 
+  var setOriginal = function () {
+    uploadedImage.setAttribute('class', '');
+    effectLevelSlider.classList.add('hidden');
+    removeEffectValue();
+  };
+
   imgUploadInput.addEventListener('change', function () {
     imgEditing.classList.remove('hidden');
+    setOriginal();
     document.body.classList.add('modal-open');
     document.addEventListener('keydown', onImgEditingEscPress);
-    if (previewOriginal.checked) {
-      effectLevelSlider.classList.add('hidden');
-    }
   });
 
   imgEditingCancel.addEventListener('click', function () {
     closeImgEditing();
   });
 
+  var addEffectValue = function (effect) {
+    var ratio = effectValue.value / 100;
+    uploadedImage.style.filter = Filters[effect].name + '(' + (Filters[effect].min + ratio * (Filters[effect].max - Filters[effect].min)) + Filters[effect].unit + ')';
+  };
+
+  var removeEffectValue = function () {
+    uploadedImage.style.filter = '';
+  };
+
+
   var onChangeApplyFilter = function (evt) {
     currentEffect = evt.target.value;
     if (currentEffect === 'none') {
-      uploadedImage.setAttribute('class', '');
-      removeEffectValue();
-      effectLevelSlider.classList.add('hidden');
+      setOriginal();
     } else {
       uploadedImage.setAttribute('class', 'effects__preview--' + currentEffect);
       effectLevelSlider.classList.remove('hidden');
@@ -151,14 +162,6 @@
     }
   });
 
-  var addEffectValue = function (effect) {
-    var ratio = effectValue.value / 100;
-    uploadedImage.style.filter = FILTERS[effect].name + '(' + (FILTERS[effect].min + ratio * (FILTERS[effect].max - FILTERS[effect].min)) + FILTERS[effect].unit + ')';
-  };
-
-  var removeEffectValue = function () {
-    uploadedImage.style.filter = '';
-  };
 
   var onMouseDown = function (downEvt) {
     downEvt.preventDefault();
@@ -182,67 +185,51 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   };
-  var main = document.querySelector('main');
 
-  var onPostDataError = function (message) {
-    console.log(message);
-    imgEditing.classList.add('hidden');
-    main.appendChild(errorMessage);
-    errorMessage.addEventListener('keydown', onErrorMessageEscPress);
+  var closeMessage = function (msg) {
+    msg.classList.add('hidden');
+    document.removeEventListener('keydown', onMessageEscPress);
+    msg.removeEventListener('mouseup', onClickOutsideClose);
   };
 
-  var onErrorMessageEscPress = function (evt) {
-    if (evt.key === 'Esc') {
+  var onClickOutsideClose = function (evt) {
+    if (evt.target === evt.currentTarget) {
+      closeMessage(message);
+    }
+  };
+
+  var onMessageEscPress = function (evt) {
+    if (evt.key === 'Escape') {
       evt.preventDefault();
-      closeErrorMessage();
+      closeMessage(message);
     }
   };
 
-  var closeErrorMessage = function () {
-    errorMessage.classList.add('hidden');
-    errorMessage.removeEventListener('keydown', onErrorMessageEscPress);
+  var createPopupMessage = function (subj) {
+    var template = document.querySelector('#' + subj).content.querySelector('.' + subj);
+    message = template.cloneNode(true);
+    var btn = message.querySelector('.' + subj + '__button');
+    closeImgEditing();
+    main.appendChild(message);
+    document.addEventListener('keydown', onMessageEscPress);
+    message.addEventListener('mouseup', onClickOutsideClose);
+
+
+    btn.addEventListener('click', function () {
+      closeMessage(message);
+    });
   };
 
-  errorBtn.addEventListener('click', function () {
-    closeErrorMessage();
-  });
-
-  var onPostDataSuccess = function (data) {
-    console.log(data);
-    imgEditing.classList.add('hidden');
-    main.appendChild(successMessage);
-    successMessage.addEventListener('keydown', onSuccessMessageEscPress);
-    document.addEventListener('mouseup', onClickOutsideCloseSuccessMessage);
+  var onSaveDataSuccess = function () {
+    createPopupMessage(MessageType.success);
   };
 
-  var onSuccessMessageEscPress = function (evt) {
-    if (evt.key === 'Esc') {
-      evt.preventDefault();
-      closeSuccessMessage();
-    }
+  var onSaveDataError = function () {
+    createPopupMessage(MessageType.error);
   };
 
-  var closeSuccessMessage = function () {
-    successMessage.classList.add('hidden');
-    successMessage.removeEventListener('keydown', onSuccessMessageEscPress);
-    document.removeEventListener('mouseup', onClickOutsideCloseSuccessMessage);
-  };
-
-  successBtn.addEventListener('click', function () {
-    closeSuccessMessage();
-  });
-
-
-  var onClickOutsideCloseSuccessMessage = function (evt) {
-    if (evt.target !== successMessage) {
-      closeSuccessMessage();
-    }
-  };
-
-  var form = document.querySelector('.img-upload__form');
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    var formData = new FormData(form);
-    window.data.postData(formData, onPostDataSuccess, onPostDataError);
+    window.data.saveData(new FormData(form), onSaveDataSuccess, onSaveDataError);
   });
 })();

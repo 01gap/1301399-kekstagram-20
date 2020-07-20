@@ -3,11 +3,13 @@
 (function () {
   var SUCCESS_CODE = 200;
   var TIMEOUT = 10000;
+  var Url = {
+    GET_URL: 'https://javascript.pages.academy/kekstagram/data',
+    POST_URL: 'https://javascript.pages.academy/kekstagram'
+  };
 
-  var getData = function (onSuccess, onError) {
-    var DATA_URL = 'https://javascript.pages.academy/kekstagram/data';
+  var createXhr = function (method, methodUrl, formData, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
-
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
       if (xhr.status === SUCCESS_CODE) {
@@ -25,38 +27,23 @@
     });
     xhr.timeout = TIMEOUT;
 
-    xhr.open('GET', DATA_URL);
-    xhr.send();
+    xhr.open(method, methodUrl);
+    if (method === 'GET') {
+      xhr.send();
+    } else if (method === 'POST') {
+      xhr.send(formData);
+    }
   };
 
-  var postData = function (formData, onSuccess, onError) {
-    var POST_URL = 'https://javascript.pages.academy/kekstagram';
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
+  var getData = function (onSuccess, onError) {
+    createXhr('GET', Url.GET_URL, null, onSuccess, onError);
+  };
 
-    xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
-        onSuccess(xhr.response);
-      } else {
-        onError('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);
-      }
-    });
-
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
-    });
-
-    xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
-    });
-    xhr.timeout = TIMEOUT;
-
-    xhr.open('POST', POST_URL);
-    // xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-    xhr.send(formData);
+  var saveData = function (formData, onSuccess, onError) {
+    createXhr('POST', Url.POST_URL, formData, onSuccess, onError);
   };
   window.data = {
     getData: getData,
-    postData: postData
+    saveData: saveData
   };
 })();
