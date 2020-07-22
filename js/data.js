@@ -9,6 +9,38 @@
   };
   var xhr;
 
+  var RANDOM_COUNT = 10;
+  var filters = document.querySelector('.img-filters');
+  filters.classList.remove('img-filters--inactive');
+  // var btnDefault = filters.querySelector('#filter-default');
+  // var btnRandom = filters.querySelector('#filter-random');
+  // var btnDiscussed = filters.querySelector('#filter-discussed');
+
+  var createRandomNum = function (min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+  var createUniqueIndex = function (data) {
+    var uniqueRandomNumbers = [];
+    while (uniqueRandomNumbers.length < RANDOM_COUNT) {
+      var index = createRandomNum(0, data.length);
+      if (uniqueRandomNumbers.indexOf(index) === -1) {
+        uniqueRandomNumbers.push(index);
+      }
+    }
+    return uniqueRandomNumbers;
+  };
+
+  var createRandomData = function (data) {
+    var randomData = [];
+    var uniqueIndexes = createUniqueIndex(data);
+    for (var i = 0; i < uniqueIndexes.length; i++) {
+      var index = uniqueIndexes[i];
+      randomData.push(data[index]);
+    }
+    return randomData;
+  };
+
+
   var createXhr = function (onSuccess, onError) {
     xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -42,6 +74,7 @@
   };
   window.data = {
     getData: getData,
-    saveData: saveData
+    saveData: saveData,
+    createRandomData: createRandomData
   };
 })();
