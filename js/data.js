@@ -12,9 +12,6 @@
   var RANDOM_COUNT = 10;
   var filters = document.querySelector('.img-filters');
   filters.classList.remove('img-filters--inactive');
-  // var btnDefault = filters.querySelector('#filter-default');
-  // var btnRandom = filters.querySelector('#filter-random');
-  // var btnDiscussed = filters.querySelector('#filter-discussed');
 
   var createRandomNum = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -40,6 +37,12 @@
     return randomData;
   };
 
+  var getMostCommentedFirst = function (data) {
+    var mostCommentedFirst = data.slice().sort(function (a, b) {
+      return b.comments.length - a.comments.length;
+    });
+    return mostCommentedFirst;
+  };
 
   var createXhr = function (onSuccess, onError) {
     xhr = new XMLHttpRequest();
@@ -72,9 +75,26 @@
     xhr.open('POST', Url.POST);
     xhr.send(formData);
   };
+
+  var DEBOUNCE_INTERVAL = 500; // ms
+  var debounce = function (func) {
+    var lastTimeout = null;
+
+    return function () {
+      var parameters = arguments;
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        func.apply(null, parameters);
+      }, DEBOUNCE_INTERVAL);
+    };
+  };
   window.data = {
     getData: getData,
     saveData: saveData,
-    createRandomData: createRandomData
+    createRandomData: createRandomData,
+    getMostCommentedFirst: getMostCommentedFirst,
+    debounce: debounce
   };
 })();

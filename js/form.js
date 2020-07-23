@@ -4,6 +4,7 @@
 
 (function () {
   var MAX_EFFECT_VALUE = 100;
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var imgEditing = document.querySelector('.img-upload__overlay');
   var imgEditingCancel = imgEditing.querySelector('.img-upload__cancel');
   var imgUploadInput = document.querySelector('.img-upload__input');
@@ -13,6 +14,7 @@
   var hashtagInput = document.querySelector('.text__hashtags');
   var effectLevelSlider = document.querySelector('.img-upload__effect-level');
   var filterList = document.querySelector('.effects__list');
+  var fileChooser = document.querySelector('.img-upload__input');
 
   var effectLine = document.querySelector('.effect-level__line');
   var effectPin = effectLine.querySelector('.effect-level__pin');
@@ -70,6 +72,25 @@
     phobos: blur,
     heat: brightness
   };
+
+  fileChooser.addEventListener('change', function () {
+    var file = fileChooser.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        uploadedImage.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+  });
 
   var closeImgEditing = function () {
     imgEditing.classList.add('hidden');
