@@ -1,7 +1,4 @@
 'use strict';
-
-// form.js модуль работы с формой
-
 (function () {
   var MAX_EFFECT_VALUE = 100;
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
@@ -80,14 +77,11 @@
     var matches = FILE_TYPES.some(function (it) {
       return fileName.endsWith(it);
     });
-
     if (matches) {
       var reader = new FileReader();
-
       reader.addEventListener('load', function () {
         uploadedImage.src = reader.result;
       });
-
       reader.readAsDataURL(file);
     }
   });
@@ -131,7 +125,6 @@
     uploadedImage.style.filter = '';
   };
 
-
   var onChangeApplyFilter = function (evt) {
     currentEffect = evt.target.value;
     if (currentEffect === 'none') {
@@ -162,7 +155,6 @@
     return true;
   };
 
-
   buttonSubmit.addEventListener('click', function () {
     hashtagInput.setCustomValidity('');
     if (hashtagInput.value !== '') {
@@ -182,7 +174,6 @@
       }
     }
   });
-
 
   var onMouseDown = function (downEvt) {
     downEvt.preventDefault();
@@ -234,7 +225,6 @@
     main.appendChild(message);
     document.addEventListener('keydown', onMessageEscPress);
     message.addEventListener('mouseup', onClickOutsideClose);
-
 
     btn.addEventListener('click', function () {
       closeMessage(message);

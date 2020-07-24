@@ -1,5 +1,4 @@
 'use strict';
-
 (function () {
   var allPics;
   var filters = document.querySelector('.img-filters');
@@ -20,7 +19,7 @@
   };
 
   var getRandomPics = function () {
-    var randomPics = window.filters.createRandomData(allPics);
+    var randomPics = window.filters.chooseRandomPics(allPics);
     window.picture.renderAllImages(randomPics);
   };
 

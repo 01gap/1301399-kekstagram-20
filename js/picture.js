@@ -1,7 +1,4 @@
 'use strict';
-
-// picture.js модуль отрисовки миниатюры
-
 (function () {
   var usersImagesContainer = document.querySelector('.pictures');
   var usersImageTemplate = document.querySelector('#picture').content.querySelector('.picture');
@@ -20,14 +17,13 @@
 
   var renderAllImages = function (pictures) {
     var oldPics = usersImagesContainer.querySelectorAll('.picture');
+    var fragment = document.createDocumentFragment();
     oldPics.forEach(function (pic) {
       usersImagesContainer.removeChild(pic);
     });
-
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < pictures.length; i++) {
-      fragment.appendChild(renderImage(pictures[i]));
-    }
+    pictures.forEach(function (picture) {
+      fragment.appendChild(renderImage(picture));
+    });
     usersImagesContainer.appendChild(fragment);
   };
 

@@ -1,5 +1,4 @@
 'use strict';
-
 (function () {
   var SUCCESS_CODE = 200;
   var TIMEOUT = 10000;

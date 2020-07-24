@@ -1,31 +1,17 @@
 'use strict';
-
 (function () {
   var RANDOM_COUNT = 10;
-  var createUniqueIndex = function (dataLength) {
-    var uniqueRandomNumbers = [];
-    while (uniqueRandomNumbers.length < RANDOM_COUNT) {
-      var index = window.utils.createRandomNum(0, dataLength);
-      if (uniqueRandomNumbers.indexOf(index) === -1) {
-        uniqueRandomNumbers.push(index);
+
+  var chooseRandomPics = function (data) {
+    var randomPics = [];
+    while (randomPics.length < RANDOM_COUNT) {
+      var index = window.utils.createRandomNum(0, data.length - 1);
+      if (randomPics.indexOf(data[index]) === -1) {
+        randomPics.push(data[index]);
       }
     }
-    return uniqueRandomNumbers;
+    return randomPics;
   };
-
-  var createRandomData = function (data) {
-    var randomData = [];
-    /*
-    var dataShuffled = window.utils.shuffle(data);
-    var randomData = dataShuffled.slice(0, 10);
-    */
-    var uniqueIndexes = createUniqueIndex(data.length);
-    uniqueIndexes.forEach(function (index) {
-      randomData.push(data[index]);
-    });
-    return randomData;
-  };
-
 
   var getMostCommentedFirst = function (data) {
     var mostCommentedFirst = data.slice().sort(function (a, b) {
@@ -35,7 +21,7 @@
   };
 
   window.filters = {
-    createRandomData: createRandomData,
     getMostCommentedFirst: getMostCommentedFirst,
+    chooseRandomPics: chooseRandomPics
   };
 })();
