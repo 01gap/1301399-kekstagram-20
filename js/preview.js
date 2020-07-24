@@ -75,7 +75,7 @@
       var someComments = commentsArray.slice(counter, counter + COMMENTS_COUNT);
       insertComments(someComments);
       counter += COMMENTS_COUNT;
-      if (commentsArray.length < COMMENTS_COUNT || commentsArray.length < counter) {
+      if (commentsArray.length <= COMMENTS_COUNT || commentsArray.length <= counter) {
         uploadMoreBtn.classList.add('hidden');
         uploadMoreBtn.removeEventListener('click', showFiveFn);
       }
