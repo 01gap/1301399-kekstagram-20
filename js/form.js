@@ -1,9 +1,7 @@
 'use strict';
-
-// form.js модуль работы с формой
-
 (function () {
   var MAX_EFFECT_VALUE = 100;
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var imgEditing = document.querySelector('.img-upload__overlay');
   var imgEditingCancel = imgEditing.querySelector('.img-upload__cancel');
   var imgUploadInput = document.querySelector('.img-upload__input');
@@ -13,6 +11,7 @@
   var hashtagInput = document.querySelector('.text__hashtags');
   var effectLevelSlider = document.querySelector('.img-upload__effect-level');
   var filterList = document.querySelector('.effects__list');
+  var fileChooser = document.querySelector('.img-upload__input');
 
   var effectLine = document.querySelector('.effect-level__line');
   var effectPin = effectLine.querySelector('.effect-level__pin');
@@ -71,6 +70,22 @@
     heat: brightness
   };
 
+  fileChooser.addEventListener('change', function () {
+    var file = fileChooser.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+    if (matches) {
+      var reader = new FileReader();
+      reader.addEventListener('load', function () {
+        uploadedImage.src = reader.result;
+      });
+      reader.readAsDataURL(file);
+    }
+  });
+
   var closeImgEditing = function () {
     imgEditing.classList.add('hidden');
     document.body.classList.remove('modal-open');
@@ -110,7 +125,6 @@
     uploadedImage.style.filter = '';
   };
 
-
   var onChangeApplyFilter = function (evt) {
     currentEffect = evt.target.value;
     if (currentEffect === 'none') {
@@ -141,7 +155,6 @@
     return true;
   };
 
-
   buttonSubmit.addEventListener('click', function () {
     hashtagInput.setCustomValidity('');
     if (hashtagInput.value !== '') {
@@ -161,7 +174,6 @@
       }
     }
   });
-
 
   var onMouseDown = function (downEvt) {
     downEvt.preventDefault();
@@ -214,7 +226,6 @@
     document.addEventListener('keydown', onMessageEscPress);
     message.addEventListener('mouseup', onClickOutsideClose);
 
-
     btn.addEventListener('click', function () {
       closeMessage(message);
     });
@@ -230,6 +241,6 @@
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.data.saveData(new FormData(form), onSaveDataSuccess, onSaveDataError);
+    window.backend.saveData(new FormData(form), onSaveDataSuccess, onSaveDataError);
   });
 })();
