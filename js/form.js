@@ -251,6 +251,6 @@
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.data.saveData(new FormData(form), onSaveDataSuccess, onSaveDataError);
+    window.backend.saveData(new FormData(form), onSaveDataSuccess, onSaveDataError);
   });
 })();

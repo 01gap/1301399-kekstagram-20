@@ -1,33 +1,45 @@
 'use strict';
 
-// main.js
 (function () {
   var allPics;
-  var btnRandom = document.querySelector('#filter-random');
-  var btnDiscussed = document.querySelector('#filter-discussed');
-  var btnDefault = document.querySelector('#filter-default');
+  var filters = document.querySelector('.img-filters');
+  var filterForm = filters.querySelector('.img-filters__form');
+
+  filterForm.addEventListener('click', function (evt) {
+    var id = evt.target.getAttribute('id');
+    var func = FilterFunctions[id];
+    func();
+    filterForm.querySelector('.img-filters__button--active').classList.remove('img-filters__button--active');
+    evt.target.classList.add('img-filters__button--active');
+  });
 
   var onGetDataSuccess = function (data) {
     allPics = data;
+    filters.classList.remove('img-filters--inactive');
     window.picture.renderAllImages(data);
   };
 
-  btnRandom.addEventListener('click', function () {
-    var randomPics = window.data.createRandomData(allPics);
-    window.data.debounce(window.picture.renderAllImages(randomPics));
-  });
+  var getRandomPics = function () {
+    var randomPics = window.filters.createRandomData(allPics);
+    window.picture.renderAllImages(randomPics);
+  };
 
-  btnDiscussed.addEventListener('click', function () {
-    var sortedPics = window.data.getMostCommentedFirst(allPics);
-    window.data.debounce(window.picture.renderAllImages(sortedPics));
-  });
+  var getDiscussedPics = function () {
+    var sortedPics = window.filters.getMostCommentedFirst(allPics);
+    window.picture.renderAllImages(sortedPics);
+  };
 
-  btnDefault.addEventListener('click', function () {
-    window.data.debounce(window.picture.renderAllImages(allPics));
-  });
+  var getDefaultPics = function () {
+    window.picture.renderAllImages(allPics);
+  };
+
+  var FilterFunctions = {
+    'filter-default': getDefaultPics,
+    'filter-random': getRandomPics,
+    'filter-discussed': getDiscussedPics
+  };
 
   window.addEventListener('load', function () {
-    window.data.getData(onGetDataSuccess, function () {});
+    window.backend.getData(onGetDataSuccess, function () {});
   });
-
 })();

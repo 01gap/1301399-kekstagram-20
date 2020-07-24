@@ -20,11 +20,10 @@
 
   var renderAllImages = function (pictures) {
     var oldPics = usersImagesContainer.querySelectorAll('.picture');
-    if (oldPics !== []) {
-      oldPics.forEach(function (pic) {
-        usersImagesContainer.removeChild(pic);
-      });
-    }
+    oldPics.forEach(function (pic) {
+      usersImagesContainer.removeChild(pic);
+    });
+
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < pictures.length; i++) {
       fragment.appendChild(renderImage(pictures[i]));
@@ -33,6 +32,6 @@
   };
 
   window.picture = {
-    renderAllImages: renderAllImages,
+    renderAllImages: window.utils.debounce(renderAllImages),
   };
 })();
