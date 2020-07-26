@@ -2,6 +2,7 @@
 (function () {
   var MAX_EFFECT_VALUE = 100;
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   var imgEditing = document.querySelector('.img-upload__overlay');
   var imgEditingCancel = imgEditing.querySelector('.img-upload__cancel');
   var imgUploadInput = document.querySelector('.img-upload__input');
@@ -12,6 +13,11 @@
   var effectLevelSlider = document.querySelector('.img-upload__effect-level');
   var filterList = document.querySelector('.effects__list');
   var fileChooser = document.querySelector('.img-upload__input');
+
+  var btnSmaller = document.querySelector('.scale__control--smaller');
+  var btnBigger = document.querySelector('.scale__control--bigger');
+  var scaleValue = document.querySelector('.scale__control--value');
+  var currentScaleRatio;
 
   var effectLine = document.querySelector('.effect-level__line');
   var effectPin = effectLine.querySelector('.effect-level__pin');
@@ -56,7 +62,7 @@
   };
 
   var brightness = {
-    name: 'blur',
+    name: 'brightness',
     min: 1,
     max: 2,
     unit: ''
@@ -68,6 +74,13 @@
     marvin: invert,
     phobos: blur,
     heat: brightness
+  };
+
+  var ScaleRatio = {
+    pace: 0.25,
+    min: 0.25,
+    max: 1,
+    default: 1
   };
 
   fileChooser.addEventListener('change', function () {
@@ -89,13 +102,36 @@
   var closeImgEditing = function () {
     imgEditing.classList.add('hidden');
     document.body.classList.remove('modal-open');
+    btnSmaller.removeEventListener('click', onClickImgSmaller);
+    btnBigger.removeEventListener('click', onClickImgBigger);
+    filterList.removeEventListener('change', onChangeApplyFilter);
     document.removeEventListener('keydown', onImgEditingEscPress);
+    form.reset();
   };
 
   var onImgEditingEscPress = function (evt) {
-    if (evt.key === 'Escape' && document.activeElement !== uploadComment && document.activeElement !== hashtagInput) {
+    if (window.utils.isEscPressed(evt) && document.activeElement !== uploadComment && document.activeElement !== hashtagInput) {
       evt.preventDefault();
       closeImgEditing();
+    }
+  };
+
+  var setScaleValue = function () {
+    uploadedImage.style = 'transform: scale(' + currentScaleRatio + ')';
+    scaleValue.value = currentScaleRatio * 100 + '%';
+  };
+
+  var onClickImgSmaller = function () {
+    if (currentScaleRatio > ScaleRatio.min) {
+      currentScaleRatio -= ScaleRatio.pace;
+      setScaleValue();
+    }
+  };
+
+  var onClickImgBigger = function () {
+    if (currentScaleRatio < ScaleRatio.max) {
+      currentScaleRatio += ScaleRatio.pace;
+      setScaleValue();
     }
   };
 
@@ -106,9 +142,13 @@
   };
 
   imgUploadInput.addEventListener('change', function () {
-    imgEditing.classList.remove('hidden');
+    currentScaleRatio = ScaleRatio.default;
+    setScaleValue();
     setOriginal();
     document.body.classList.add('modal-open');
+    imgEditing.classList.remove('hidden');
+    btnSmaller.addEventListener('click', onClickImgSmaller);
+    btnBigger.addEventListener('click', onClickImgBigger);
     document.addEventListener('keydown', onImgEditingEscPress);
   });
 
@@ -157,7 +197,7 @@
 
   buttonSubmit.addEventListener('click', function () {
     hashtagInput.setCustomValidity('');
-    if (hashtagInput.value !== '') {
+    if (hashtagInput.value) {
       var hashtags = hashtagInput.value.trim().split(' ');
       var hashtagRegex = /^#[A-ZА-Я0-9ё]{1,19}$/i;
       for (var i = 0; i < hashtags.length; i++) {
@@ -211,7 +251,7 @@
   };
 
   var onMessageEscPress = function (evt) {
-    if (evt.key === 'Escape') {
+    if (window.utils.isEscPressed(evt)) {
       evt.preventDefault();
       closeMessage(message);
     }

@@ -1,6 +1,12 @@
 'use strict';
 (function () {
+  var ESC_KEYCODE = 27;
   var DEBOUNCE_INTERVAL = 500; // ms
+
+  var isEscPressed = function (evt) {
+    return evt.keyCode === ESC_KEYCODE;
+  };
+
   var debounce = function (func) {
     var lastTimeout = null;
 
@@ -22,5 +28,6 @@
   window.utils = {
     debounce: debounce,
     createRandomNum: createRandomNum,
+    isEscPressed: isEscPressed
   };
 })();

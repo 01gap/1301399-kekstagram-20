@@ -22,7 +22,7 @@
   };
 
   var onPopupEscPress = function (evt) {
-    if (evt.key === 'Escape') {
+    if (window.utils.isEscPressed(evt)) {
       evt.preventDefault();
       closePopup();
     }
@@ -71,19 +71,19 @@
   var showFiveComments = function (onePicDataComments) {
     commentsArray = onePicDataComments;
     var counter = 0;
-    var showFiveFn = function () {
+    var onClickShowComments = function () {
       var someComments = commentsArray.slice(counter, counter + COMMENTS_COUNT);
       insertComments(someComments);
       counter += COMMENTS_COUNT;
       if (commentsArray.length <= COMMENTS_COUNT || commentsArray.length <= counter) {
         uploadMoreBtn.classList.add('hidden');
-        uploadMoreBtn.removeEventListener('click', showFiveFn);
+        uploadMoreBtn.removeEventListener('click', onClickShowComments);
       }
       currentComment.textContent = Math.min(counter, onePicDataComments.length);
       return counter;
     };
-    uploadMoreBtn.addEventListener('click', showFiveFn);
-    return showFiveFn;
+    uploadMoreBtn.addEventListener('click', onClickShowComments);
+    return onClickShowComments;
   };
 
   var showPopup = function (picture) {
