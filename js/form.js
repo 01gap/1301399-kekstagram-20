@@ -80,7 +80,7 @@
     pace: 0.25,
     min: 0.25,
     max: 1,
-    default: 1
+    starting: 1
   };
 
   fileChooser.addEventListener('change', function () {
@@ -140,7 +140,7 @@
   };
 
   imgUploadInput.addEventListener('change', function () {
-    currentScaleRatio = ScaleRatio.default;
+    currentScaleRatio = ScaleRatio.starting;
     setScaleValue();
     setOriginal();
     document.body.classList.add('modal-open');

@@ -18,7 +18,7 @@
     window.picture.renderAllImages(allPics);
   };
 
-  var FilterFunctions = {
+  var filterFunctions = {
     'filter-default': getDefaultPics,
     'filter-random': getRandomPics,
     'filter-discussed': getDiscussedPics
@@ -26,7 +26,7 @@
 
   filterForm.addEventListener('click', function (evt) {
     var id = evt.target.getAttribute('id');
-    var func = FilterFunctions[id];
+    var func = filterFunctions[id];
     func();
     filterForm.querySelector('.img-filters__button--active').classList.remove('img-filters__button--active');
     evt.target.classList.add('img-filters__button--active');
