@@ -104,15 +104,13 @@
     document.body.classList.remove('modal-open');
     btnSmaller.removeEventListener('click', onClickImgSmaller);
     btnBigger.removeEventListener('click', onClickImgBigger);
-    filterList.removeEventListener('change', onChangeApplyFilter);
     document.removeEventListener('keydown', onImgEditingEscPress);
     form.reset();
   };
 
   var onImgEditingEscPress = function (evt) {
-    if (window.utils.isEscPressed(evt) && document.activeElement !== uploadComment && document.activeElement !== hashtagInput) {
-      evt.preventDefault();
-      closeImgEditing();
+    if (document.activeElement !== uploadComment && document.activeElement !== hashtagInput) {
+      window.utils.isEscEvent(evt, closeImgEditing);
     }
   };
 
@@ -238,23 +236,19 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var closeMessage = function (msg) {
-    msg.classList.add('hidden');
+  var closeMessage = function () {
+    main.removeChild(message);
     document.removeEventListener('keydown', onMessageEscPress);
-    msg.removeEventListener('mouseup', onClickOutsideClose);
   };
 
   var onClickOutsideClose = function (evt) {
     if (evt.target === evt.currentTarget) {
-      closeMessage(message);
+      closeMessage();
     }
   };
 
   var onMessageEscPress = function (evt) {
-    if (window.utils.isEscPressed(evt)) {
-      evt.preventDefault();
-      closeMessage(message);
-    }
+    window.utils.isEscEvent(evt, closeMessage);
   };
 
   var createPopupMessage = function (subj) {
@@ -267,7 +261,7 @@
     message.addEventListener('mouseup', onClickOutsideClose);
 
     btn.addEventListener('click', function () {
-      closeMessage(message);
+      closeMessage();
     });
   };
 

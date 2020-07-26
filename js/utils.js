@@ -3,8 +3,11 @@
   var ESC_KEYCODE = 27;
   var DEBOUNCE_INTERVAL = 500; // ms
 
-  var isEscPressed = function (evt) {
-    return evt.keyCode === ESC_KEYCODE;
+  var isEscEvent = function (evt, action) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      evt.preventDefault();
+      action();
+    }
   };
 
   var debounce = function (func) {
@@ -26,8 +29,8 @@
   };
 
   window.utils = {
+    isEscEvent: isEscEvent,
     debounce: debounce,
     createRandomNum: createRandomNum,
-    isEscPressed: isEscPressed
   };
 })();

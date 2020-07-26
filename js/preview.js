@@ -22,10 +22,7 @@
   };
 
   var onPopupEscPress = function (evt) {
-    if (window.utils.isEscPressed(evt)) {
-      evt.preventDefault();
-      closePopup();
-    }
+    window.utils.isEscEvent(evt, closePopup);
   };
 
   previewBtnClose.addEventListener('click', function () {
